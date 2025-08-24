@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.env
+.venv/
+.env.*
+*.egg-info/
+
+# Node
+node_modules/
+
+# IDEs
+.vscode/
+.idea/
+data/ePA Test Data/*

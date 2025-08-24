@@ -1,11 +1,13 @@
 import streamlit as st
-import requests 
+import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# API Base URL
 API_BASE_URL = "http://192.168.178.59:8000/api/"
 DASHBOARD_URL = f"{API_BASE_URL}dashboard/1/"
 
+# Fetching data from the API
 response = requests.get(DASHBOARD_URL)
 data = response.json()
 
@@ -13,13 +15,12 @@ data = response.json()
 test_results_df = pd.DataFrame(data['test_results'])
 
 # Title and Patient Info
-st.title("My Test Results")
+st.set_page_config(page_title="My Test Results", layout="wide")
+st.title("🩺 My Test Results")
+st.markdown("---")
 
-# Convert test results to a DataFrame
-test_results_df = pd.DataFrame(data['test_results'])
-
-# Display test results table
-st.header("Overview")
+# Display overview header
+st.header("Overview 📊")
 st.dataframe(test_results_df, use_container_width=True, hide_index=True)
 
 # Grouping test results by `test_type` and `result`
@@ -43,20 +44,19 @@ chart_counter = 0
 # Set a fixed height for the charts
 fixed_height = 300  # Height in pixels
 
+# Map results to numeric values
 result_mapping = {'low': 0, 'Normal': 1, 'High': 2}
-
-# Add a new column for result_value using the mapping
 test_results_df['result_value'] = test_results_df['result'].map(result_mapping)
 date_result_df = test_results_df.groupby(['date', 'test_type']).agg({'result_value': 'mean'}).reset_index()
 
-
 # Display a variety of charts for different test types
 for test_type in result_counts.index:
-
     filtered_data = date_result_df[date_result_df['test_type'] == test_type]
+
     if chart_counter % 2 == 0:
         with col1:
-            st.write(f"### {test_type}")
+            st.write(f"<h3 style='color: #003366;'>{test_type}</h3>", unsafe_allow_html=True)  # Dark Blue
+            st.markdown("<hr>", unsafe_allow_html=True)  # Add horizontal line for separation
             if chart_types[test_type] == 'bar':
                 st.bar_chart(filtered_data.set_index('date')['result_value'], height=fixed_height)
             elif chart_types[test_type] == 'line':
@@ -69,7 +69,8 @@ for test_type in result_counts.index:
                 st.pyplot(fig)
     else:
         with col2:
-            st.write(f"### {test_type}")
+            st.write(f"<h3 style='color: #003366;'>{test_type}</h3>", unsafe_allow_html=True)  # Dark Blue
+            st.markdown("<hr>", unsafe_allow_html=True)  # Add horizontal line for separation
             if chart_types[test_type] == 'bar':
                 st.bar_chart(filtered_data.set_index('date')['result_value'], height=fixed_height)
             elif chart_types[test_type] == 'line':
@@ -85,4 +86,28 @@ for test_type in result_counts.index:
     chart_counter += 1
 
 # Add space at the end for better readability
-st.write("")  
+st.write("")
+
+# Optionally, add a footer or motivational message
+st.markdown(
+    "<h3 style='color: #ff7043;'>Stay Informed, Stay Healthy! 🌟</h3>",
+    unsafe_allow_html=True
+)
+
+# Additional CSS for styling
+st.markdown("""
+    <style>
+        h3 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d6efd; /* Custom color for headers */
+        }
+        h4 {
+            font-size: 18px;
+            color: #6c757d; /* Gray color for secondary headers */
+        }
+        .stMarkdown {
+            margin-bottom: 10px;
+        }
+    </style>
+""", unsafe_allow_html=True)
