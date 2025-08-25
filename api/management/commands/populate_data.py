@@ -6,8 +6,8 @@ from django.conf import settings
 
 # Configure the NVIDIA client
 client = OpenAI(
-    base_url="https://integrate.api.nvidia.com/v1",
-    api_key="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"
+    base_url="xx",
+    api_key="xx"
 )
 
 import re
